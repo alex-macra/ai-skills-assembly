@@ -1,0 +1,141 @@
+{
+  "version": "1.0",
+  "description": "Offline routing fixtures for the public activation registry.",
+  "positive": {
+    "run the delivery loop on this task": [
+      "delivery-loop"
+    ],
+    "work this in a loop and get it ready": [
+      "delivery-loop"
+    ],
+    "plan then implement this": [
+      "delivery-loop"
+    ],
+    "quality loop this before PR": [
+      "delivery-loop"
+    ],
+    "plan then do quality review smoke": [
+      "delivery-loop"
+    ],
+    "run the orchestrator for this AI Skills Assembly task": [
+      "delivery-loop"
+    ],
+    "review/adversarial review then smoke test": [
+      "delivery-loop",
+      "adversarial-review",
+      "smoke-test"
+    ],
+    "merge this PR into main": [
+      "fast-pr-workflow"
+    ],
+    "merge #46": [
+      "fast-pr-workflow"
+    ],
+    "merge it": [
+      "fast-pr-workflow"
+    ],
+    "squash #46": [
+      "fast-pr-workflow"
+    ],
+    "land PR #46": [
+      "fast-pr-workflow"
+    ],
+    "promote dev to main": [
+      "fast-pr-workflow"
+    ],
+    "merge #46 into master": [
+      "fast-pr-workflow"
+    ],
+    "create a pull request for this work": [
+      "fast-pr-workflow"
+    ],
+    "commit changes and push branch": [
+      "fast-pr-workflow"
+    ],
+    "run an accessibility audit on the settings page": [
+      "a11y-audit"
+    ],
+    "check WCAG keyboard navigation on the form": [
+      "a11y-audit"
+    ],
+    "try to break this change": [
+      "adversarial-review"
+    ],
+    "poke holes in my assumptions": [
+      "adversarial-review"
+    ],
+    "review the module structure of this package": [
+      "architect-review"
+    ],
+    "is there tech debt to clean up here": [
+      "architect-review"
+    ],
+    "set up GitHub Actions for this repo": [
+      "automation"
+    ],
+    "add a cron job for nightly backups": [
+      "automation"
+    ],
+    "strip the redundant comments from this file": [
+      "code-comments"
+    ],
+    "should I add a docstring here": [
+      "code-comments"
+    ],
+    "record a trace for the failing user journey": [
+      "e2e-qa"
+    ],
+    "the Playwright headless run keeps timing out": [
+      "e2e-qa"
+    ],
+    "write unit tests for the parser": [
+      "qa-automation"
+    ],
+    "the vitest suite is flaky": [
+      "qa-automation"
+    ],
+    "scan the repo for leaked credentials": [
+      "security-review"
+    ],
+    "run an OWASP top 10 review": [
+      "security-review"
+    ],
+    "launch the app and screenshot the result": [
+      "see-it-live"
+    ],
+    "start the server so I can preview it": [
+      "see-it-live"
+    ],
+    "run a smoke test on the critical path": [
+      "smoke-test"
+    ],
+    "sanity check that it still boots": [
+      "smoke-test"
+    ],
+    "research the best library for PDF parsing": [
+      "task-research"
+    ],
+    "compare approaches before we choose a sync engine": [
+      "task-research"
+    ],
+    "add a FastAPI endpoint for uploads": [
+      "web-dev-backend"
+    ],
+    "fix the Express middleware ordering": [
+      "web-dev-backend"
+    ],
+    "build a React component for the modal": [
+      "web-dev-frontend"
+    ],
+    "style the settings page with Tailwind": [
+      "web-dev-frontend"
+    ]
+  },
+  "negative": [
+    "translate this paragraph to German",
+    "what time is it in Tokyo",
+    "sort this list alphabetically",
+    "write a haiku about autumn",
+    "summarize the meeting notes"
+  ]
+}

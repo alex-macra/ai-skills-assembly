@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "name": "ai-skills-assembly",
+  "displayName": "AI Skills Assembly",
+  "description": "AI Skills Assembly provides generic, cross-project skills and optional agent surfaces for supported agent CLIs.",
+  "surfaces": {
+    "skills": [
+      "agents",
+      "claude",
+      "codex"
+    ],
+    "agents": [
+      "claude",
+      "codex"
+    ]
+  },
+  "skills": {
+    "a11y-audit": {
+      "path": "skills/a11y-audit"
+    },
+    "adversarial-review": {
+      "path": "skills/adversarial-review"
+    },
+    "architect-review": {
+      "path": "skills/architect-review"
+    },
+    "automation": {
+      "path": "skills/automation"
+    },
+    "code-comments": {
+      "path": "skills/code-comments"
+    },
+    "delivery-loop": {
+      "path": "skills/delivery-loop"
+    },
+    "e2e-qa": {
+      "path": "skills/e2e-qa"
+    },
+    "fast-pr-workflow": {
+      "path": "skills/fast-pr-workflow"
+    },
+    "qa-automation": {
+      "path": "skills/qa-automation"
+    },
+    "security-review": {
+      "path": "skills/security-review"
+    },
+    "see-it-live": {
+      "path": "skills/see-it-live"
+    },
+    "smoke-test": {
+      "path": "skills/smoke-test"
+    },
+    "task-research": {
+      "path": "skills/task-research"
+    },
+    "web-dev-backend": {
+      "path": "skills/web-dev-backend"
+    },
+    "web-dev-frontend": {
+      "path": "skills/web-dev-frontend"
+    }
+  },
+  "agents": {
+    "qa": {
+      "path": "agents/qa.md"
+    },
+    "reviewer": {
+      "path": "agents/reviewer.md"
+    },
+    "shipper": {
+      "path": "agents/shipper.md"
+    }
+  },
+  "profiles": {
+    "default": {
+      "description": "Install the complete generic skill and agent set.",
+      "skills": [
+        "a11y-audit",
+        "adversarial-review",
+        "architect-review",
+        "automation",
+        "code-comments",
+        "delivery-loop",
+        "e2e-qa",
+        "fast-pr-workflow",
+        "qa-automation",
+        "security-review",
+        "see-it-live",
+        "smoke-test",
+        "task-research",
+        "web-dev-backend",
+        "web-dev-frontend"
+      ],
+      "agents": [
+        "qa",
+        "reviewer",
+        "shipper"
+      ]
+    }
+  },
+  "globalRules": {
+    "claude": "templates/CLAUDE.md",
+    "codex": "templates/AGENTS.md"
+  },
+  "hooks": {
+    "activation": "hooks/skill-activation.py",
+    "usage": "hooks/skill-usage-log.py",
+    "mergeGuard": "hooks/merge-guard.py"
+  },
+  "routing": {
+    "registry": "routing/skill-rules.json",
+    "fixtures": "routing/routing-expectations.json"
+  }
+}

@@ -1,0 +1,52 @@
+# AI Skills Assembly
+
+Reusable skills, deterministic activation, and an installer for agent CLI and agentskills.io-compatible surfaces.
+
+Version 1 supports Python 3.10 or newer on Linux and macOS.
+
+## Install
+
+```bash
+python3 install.py user
+python3 install.py project /absolute/path/to/repo
+```
+
+Both commands install the `default` profile on the Claude, Codex, and Agents surfaces. Repeat `--surface` with `claude`, `codex`, or `agents` to limit surfaces. Use `--dry-run` to preview and `--uninstall` to remove managed entries.
+
+Installs are idempotent, preflight all targets, refuse unmanaged conflicts, back up modified settings and text files as numbered `.bak` files, and track ownership in `.ai-skills-managed.json`.
+
+## Optional integrations
+
+Activation, usage logging, protected-branch command checks, and global rule templates are opt-in:
+
+```bash
+python3 install.py user --hooks --global-rules
+```
+
+The usage hook records `ts`, invoked `skill`, and hook-provided `cwd` as JSONL in `~/.ai-skills/skill-usage.jsonl` with user-only permissions. Override the path with `AI_SKILLS_USAGE_LOG`. Uninstall leaves existing log data intact.
+
+Install the protected-branch Git hook separately:
+
+```bash
+python3 install.py merge-guard /absolute/path/to/repo
+```
+
+Command and Git hooks are advisory defense-in-depth, not security boundaries. Enforce protected branches remotely with required checks, reviews, and credentials that cannot bypass them.
+
+## Compose catalogs
+
+`catalog.json` is the canonical inventory. Paths are relative to the catalog that declares them; repeat `--catalog` and `--profile` to add a private overlay:
+
+```bash
+python3 install.py project /absolute/path/to/repo \
+  --catalog /absolute/path/to/ai-skills-assembly/catalog.json \
+  --catalog /absolute/path/to/overlay/catalog.json \
+  --profile default \
+  --profile team-project
+```
+
+Selected profiles are the complete desired set on selected surfaces. Pass every profile that should remain active. Plain `--uninstall` also removes installer-managed hooks and global rules without requiring their opt-in flags.
+
+The activation hook emits matching skill names from `routing/skill-rules.json`, fails open on malformed input, and never injects skill bodies.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the public boundary and validation command, [SECURITY.md](SECURITY.md) for private reporting, and [LICENSE](LICENSE) for the MIT License.
