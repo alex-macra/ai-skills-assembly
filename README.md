@@ -49,4 +49,8 @@ Selected profiles are the complete desired set on selected surfaces. Pass every 
 
 The activation hook emits matching skill names from `routing/skill-rules.json`, fails open on malformed input, and never injects skill bodies.
 
+## Output styles
+
+The `default` profile installs the `Terse` output style file to the Claude surface's `output-styles/` directory. Installing it does not turn it on - a style only changes Claude Code's behavior once selected with `/config` (Output style) or by setting `"outputStyle": "Terse"` in a Claude Code settings file. A style change takes effect after `/clear` or a new session.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the public boundary and validation command, [SECURITY.md](SECURITY.md) for private reporting, and [LICENSE](LICENSE) for the MIT License.

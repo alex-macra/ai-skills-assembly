@@ -82,6 +82,19 @@
     "should I add a docstring here": [
       "code-comments"
     ],
+    "reuse what exists instead of adding another helper": [
+      "code-reuse"
+    ],
+    "is there already an existing util for this": [
+      "code-reuse"
+    ],
+    "stop creating new helper functions for everything": [
+      "code-reuse"
+    ],
+    "review this diff for duplication and reuse": [
+      "architect-review",
+      "code-reuse"
+    ],
     "record a trace for the failing user journey": [
       "e2e-qa"
     ],

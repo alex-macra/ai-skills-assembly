@@ -28,6 +28,7 @@ IGNORE_ENTRIES = (".agents/", ".claude/", ".codex/", "AGENTS.md", "CLAUDE.md")
 MERGE_GUARD_START = "# ai-skills merge guard"
 MERGE_GUARD_END = "# /ai-skills merge guard"
 STATE_FILE = ".ai-skills-managed.json"
+STATE_DIRS = {"skills": "skills", "agents": "agents", "outputStyles": "output-styles"}
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PYTHON = Path(sys.executable).resolve(strict=False)
 
@@ -89,6 +90,7 @@ class SourceEntry:
 class Selection:
     skills: list[SourceEntry]
     agents: list[SourceEntry]
+    output_styles: list[SourceEntry]
 
 
 class CatalogSet:
@@ -96,6 +98,7 @@ class CatalogSet:
         self.catalogs: list[Catalog] = []
         self.skills: dict[str, SourceEntry] = {}
         self.agents: dict[str, SourceEntry] = {}
+        self.output_styles: dict[str, SourceEntry] = {}
         self.profiles: dict[str, list[dict]] = {}
         self.routing_paths: list[Path] = []
         self.global_rules: dict[str, Path] = {}
@@ -115,6 +118,7 @@ class CatalogSet:
             self.catalogs.append(catalog)
             self._load_sources(catalog, "skills", self.skills)
             self._load_sources(catalog, "agents", self.agents)
+            self._load_sources(catalog, "outputStyles", self.output_styles)
             self._load_profiles(catalog)
             self._load_routing(catalog)
             self._load_paths(catalog, "globalRules", self.global_rules)
@@ -148,8 +152,12 @@ class CatalogSet:
                 and (not source.is_dir() or not (source / "SKILL.md").is_file())
             ):
                 raise InstallError(f"skill source is missing SKILL.md: {source}")
-            if not self.allow_missing_sources and key == "agents" and not source.is_file():
-                raise InstallError(f"agent source is not a file: {source}")
+            if (
+                not self.allow_missing_sources
+                and key in ("agents", "outputStyles")
+                and not source.is_file()
+            ):
+                raise InstallError(f"{key[:-1]} source is not a file: {source}")
             destination[name] = SourceEntry(name=name, path=source, catalog=catalog)
 
     def _load_profiles(self, catalog: Catalog) -> None:
@@ -195,7 +203,11 @@ class CatalogSet:
     def _validate_profile_references(self) -> None:
         for name, fragments in self.profiles.items():
             for fragment in fragments:
-                for key, available in (("skills", self.skills), ("agents", self.agents)):
+                for key, available in (
+                    ("skills", self.skills),
+                    ("agents", self.agents),
+                    ("outputStyles", self.output_styles),
+                ):
                     values = fragment.get(key, [])
                     if not isinstance(values, list) or not all(isinstance(item, str) for item in values):
                         raise InstallError(f"profile {name!r} has invalid {key}")
@@ -216,6 +228,7 @@ class CatalogSet:
     def select(self, profile_names: list[str]) -> Selection:
         selected_skills: dict[str, SourceEntry] = {}
         selected_agents: dict[str, SourceEntry] = {}
+        selected_output_styles: dict[str, SourceEntry] = {}
         for profile_name in profile_names:
             fragments = self.profiles.get(profile_name)
             if not fragments:
@@ -225,7 +238,13 @@ class CatalogSet:
                     selected_skills.setdefault(name, self.skills[name])
                 for name in fragment.get("agents", []):
                     selected_agents.setdefault(name, self.agents[name])
-        return Selection(list(selected_skills.values()), list(selected_agents.values()))
+                for name in fragment.get("outputStyles", []):
+                    selected_output_styles.setdefault(name, self.output_styles[name])
+        return Selection(
+            list(selected_skills.values()),
+            list(selected_agents.values()),
+            list(selected_output_styles.values()),
+        )
 
     def merged_rules(self, selected_names: set[str]) -> dict:
         merged: dict = {}
@@ -490,6 +509,7 @@ def empty_state() -> dict:
         "managedBy": MANAGED_BY,
         "skills": {},
         "agents": {},
+        "outputStyles": {},
         "globalRule": None,
         "hooks": {},
     }
@@ -513,6 +533,13 @@ def load_surface_state(root: Path) -> dict:
             validate_name(name, f"managed state {key} name")
             if not isinstance(source, str) or not Path(source).is_absolute():
                 raise InstallError(f"invalid managed state source for {key}.{name} in {path}")
+    output_styles = data.setdefault("outputStyles", {})
+    if not isinstance(output_styles, dict):
+        raise InstallError(f"invalid managed state in {path}: outputStyles must be an object")
+    for name, source in output_styles.items():
+        validate_name(name, "managed state outputStyles name")
+        if not isinstance(source, str) or not Path(source).is_absolute():
+            raise InstallError(f"invalid managed state source for outputStyles.{name} in {path}")
     global_rule = data.setdefault("globalRule", None)
     if global_rule is not None and (
         not isinstance(global_rule, str) or not Path(global_rule).is_absolute()
@@ -531,7 +558,7 @@ def load_surface_state(root: Path) -> dict:
 
 def state_target(root: Path, kind: str, name: str) -> Path:
     suffix = name if kind == "skills" else f"{name}.md"
-    return root / kind / suffix
+    return root / STATE_DIRS[kind] / suffix
 
 
 def desired_surface_state(
@@ -551,6 +578,11 @@ def desired_surface_state(
             for entry in selection.agents
             if surface in {"claude", "codex"}
         },
+        "outputStyles": {
+            entry.name: str(entry.path.resolve(strict=False))
+            for entry in selection.output_styles
+            if surface == "claude"
+        },
         "globalRule": previous.get("globalRule"),
         "hooks": dict(previous.get("hooks", {})),
     }
@@ -565,14 +597,21 @@ def surface_link_operations(
     previous = load_surface_state(root)
     desired = desired_surface_state(surface, selection, previous, uninstall)
     operations: list[tuple[Path, Path, bool, set[Path]]] = []
-    for kind in ("skills", "agents"):
+    for kind in ("skills", "agents", "outputStyles"):
         prior_entries = previous[kind]
         desired_entries = desired[kind]
         for name, raw_source in prior_entries.items():
             if name not in desired_entries:
                 operations.append((Path(raw_source), state_target(root, kind, name), True, set()))
-        selected_entries = selection.skills if kind == "skills" else selection.agents
+        if kind == "skills":
+            selected_entries = selection.skills
+        elif kind == "agents":
+            selected_entries = selection.agents
+        else:
+            selected_entries = selection.output_styles
         if kind == "agents" and surface == "agents":
+            selected_entries = []
+        if kind == "outputStyles" and surface != "claude":
             selected_entries = []
         if uninstall:
             # Legacy pre-state links are still removable when their catalog entry exists.
@@ -592,6 +631,7 @@ def write_surface_state(actions: Actions, root: Path, state_data: dict) -> None:
     if (
         not state_data["skills"]
         and not state_data["agents"]
+        and not state_data.get("outputStyles")
         and not state_data.get("globalRule")
         and not state_data.get("hooks")
     ):
@@ -1139,6 +1179,7 @@ def run_install(args: argparse.Namespace) -> int:
         keep_project_state = any(
             state_data["skills"]
             or state_data["agents"]
+            or state_data.get("outputStyles")
             or state_data.get("globalRule")
             or state_data.get("hooks")
             for state_data in post_states.values()
@@ -1203,8 +1244,8 @@ def run_install(args: argparse.Namespace) -> int:
 
     verb = "uninstalled" if args.uninstall else "installed"
     print(
-        f"{verb} {len(selection.skills)} skill(s) and {len(selection.agents)} agent(s) "
-        f"for {', '.join(surfaces)}"
+        f"{verb} {len(selection.skills)} skill(s), {len(selection.agents)} agent(s), "
+        f"and {len(selection.output_styles)} output style(s) for {', '.join(surfaces)}"
     )
     return 0
 

@@ -12,6 +12,9 @@
     "agents": [
       "claude",
       "codex"
+    ],
+    "outputStyles": [
+      "claude"
     ]
   },
   "skills": {
@@ -29,6 +32,9 @@
     },
     "code-comments": {
       "path": "skills/code-comments"
+    },
+    "code-reuse": {
+      "path": "skills/code-reuse"
     },
     "delivery-loop": {
       "path": "skills/delivery-loop"
@@ -72,6 +78,11 @@
       "path": "agents/shipper.md"
     }
   },
+  "outputStyles": {
+    "terse": {
+      "path": "templates/output-styles/terse.md"
+    }
+  },
   "profiles": {
     "default": {
       "description": "Install the complete generic skill and agent set.",
@@ -81,6 +92,7 @@
         "architect-review",
         "automation",
         "code-comments",
+        "code-reuse",
         "delivery-loop",
         "e2e-qa",
         "fast-pr-workflow",
@@ -96,6 +108,9 @@
         "qa",
         "reviewer",
         "shipper"
+      ],
+      "outputStyles": [
+        "terse"
       ]
     }
   },

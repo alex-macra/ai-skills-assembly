@@ -21,4 +21,4 @@ Order of work:
 
 If a test fails for a reason outside the change under test (missing service, absent fixture, environment), say so explicitly instead of weakening the assertion to get green.
 
-Report: what you added or changed, the command to run it, and the actual result.
+Report: what you added or changed, the command to run it, and the actual result - no preamble, no recap of the request. Keep the real output; trim nothing else.
