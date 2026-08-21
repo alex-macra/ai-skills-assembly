@@ -62,8 +62,8 @@ class ValidatorTests(unittest.TestCase):
             }
             positive[f"please use {keyword}"] = [name]
 
-        self.write("agents/helper.md", "# Helper\n")
-        self.write("templates/CLAUDE.md", "# Claude rules\n")
+        self.write("agents/helper.md", "---\nname: helper\ndescription: Sample helper agent.\n---\n# Helper\n")
+        self.write("templates/CLAUDE.md", "# Agent rules\n")
         self.write("templates/AGENTS.md", "# Agent rules\n")
         self.write("hooks/merge-guard.py", "VALUE = 1\n")
         self.write("hooks/skill-usage-log.py", "VALUE = 1\n")
@@ -78,10 +78,15 @@ class ValidatorTests(unittest.TestCase):
                 "schemaVersion": 1,
                 "name": "ai-skills-assembly",
                 "displayName": "AI Skills Assembly",
-                "surfaces": {"skills": ["agents", "claude", "codex"], "agents": ["claude", "codex"]},
+                "surfaces": {
+                    "skills": ["agents", "claude", "codex"],
+                    "agents": ["claude", "codex"],
+                    "outputStyles": ["claude"],
+                },
                 "skills": catalog_skills,
                 "agents": {"helper": {"path": "agents/helper.md"}},
-                "profiles": {"default": {"skills": SKILL_NAMES, "agents": ["helper"]}},
+                "outputStyles": {},
+                "profiles": {"default": {"skills": SKILL_NAMES, "agents": ["helper"], "outputStyles": []}},
                 "routing": {
                     "registry": "routing/skill-rules.json",
                     "fixtures": "routing/routing-expectations.json",

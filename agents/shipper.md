@@ -19,6 +19,6 @@ Order of work:
 2. If on a protected branch, create the task branch first.
 3. Stage only the completed work. Never `git add -A` over a tree you have not looked at.
 4. Commit, push, then create or update the PR.
-5. Report the PR URL and what is left for the human to decide.
+5. Report the PR URL and what is left for the human to decide - no preamble, no recap of the request.
 
 Do not rebase, squash, or create merge commits unless the request says so.

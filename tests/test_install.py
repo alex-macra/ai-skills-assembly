@@ -65,15 +65,22 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(second[0], 0, second)
         for home in self.user_env.values():
             skills = Path(home) / "skills"
-            self.assertEqual(len(list(skills.iterdir())), 15)
+            self.assertEqual(len(list(skills.iterdir())), 16)
         self.assertEqual(len(list((Path(self.user_env["CLAUDE_CONFIG_DIR"]) / "agents").iterdir())), 3)
         self.assertEqual(len(list((Path(self.user_env["CODEX_HOME"]) / "agents").iterdir())), 3)
+
+        claude_styles = Path(self.user_env["CLAUDE_CONFIG_DIR"]) / "output-styles"
+        self.assertEqual([path.name for path in claude_styles.iterdir()], ["terse.md"])
+        self.assertTrue(claude_styles.is_symlink() is False and (claude_styles / "terse.md").is_symlink())
+        self.assertFalse((Path(self.user_env["CODEX_HOME"]) / "output-styles").exists())
+        self.assertFalse((Path(self.user_env["AGENTS_HOME"]) / "output-styles").exists())
 
         removed = self.run_main([*arguments, "--uninstall"])
         self.assertEqual(removed[0], 0, removed)
         for home in self.user_env.values():
             skills = Path(home) / "skills"
             self.assertFalse(any(skills.iterdir()))
+        self.assertFalse(any(claude_styles.iterdir()))
 
     def test_dry_run_writes_nothing(self) -> None:
         result = self.run_main(["user", "--dry-run"])
@@ -93,19 +100,25 @@ class InstallerTests(unittest.TestCase):
 
         for surface in (".claude", ".codex", ".agents"):
             links = list((project / surface / "skills").glob("*/SKILL.md"))
-            self.assertEqual(len(links), 15, surface)
+            self.assertEqual(len(links), 16, surface)
         rules = json.loads((project / ".claude" / "skills" / "skill-rules.json").read_text())
         self.assertEqual(rules["_managedBy"], "ai-skills")
         self.assertEqual(set(rules["skills"]), set(installer.CatalogSet([ROOT / "catalog.json"]).skills))
         gitignore = (project / ".gitignore").read_text()
         self.assertIn(installer.IGNORE_START, gitignore)
         self.assertIn("AGENTS.md", gitignore)
+        self.assertEqual(
+            [path.name for path in (project / ".claude" / "output-styles").iterdir()],
+            ["terse.md"],
+        )
+        self.assertFalse((project / ".codex" / "output-styles").exists())
 
         removed = self.run_main([*arguments, "--uninstall"])
         self.assertEqual(removed[0], 0, removed)
         self.assertFalse((project / ".claude" / "skills" / "skill-rules.json").exists())
         self.assertFalse((project / ".gitignore").exists())
         self.assertFalse((project / ".gitignore.bak").exists())
+        self.assertFalse(any((project / ".claude" / "output-styles").iterdir()))
 
     def test_project_shared_state_follows_remaining_surfaces(self) -> None:
         project = self.temp / "partial-project"
@@ -699,7 +712,7 @@ class InstallerTests(unittest.TestCase):
         rules = json.loads(
             (project / ".claude" / "skills" / "skill-rules.json").read_text()
         )["skills"]
-        self.assertEqual(len(rules), 16)
+        self.assertEqual(len(rules), 17)
         self.assertIn("a11y-audit", rules)
         self.assertIn("sample-overlay", rules)
 

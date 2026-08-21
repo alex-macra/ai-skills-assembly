@@ -202,6 +202,39 @@
         "pathPatterns": []
       }
     },
+    "code-reuse": {
+      "type": "process",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "description": "Reuse before writing - find the existing helper and extend it instead of adding a near-duplicate.",
+      "promptTriggers": {
+        "keywords": [
+          "reuse",
+          "code reuse",
+          "reusability",
+          "duplicate code",
+          "duplication",
+          "copy-paste",
+          "copy paste",
+          "deduplicate",
+          "near-duplicate",
+          "already exists",
+          "reinvent",
+          "new helper",
+          "new utility",
+          "shared helper"
+        ],
+        "intentPatterns": [
+          "(reuse|re-use).*?(existing|current|what.?s there|code|helper|component)",
+          "(duplicate|duplicated|duplication|copy.?paste).*?(code|logic|helper|function|component)",
+          "(is there|do we|does this).*?(already|existing).*?(function|helper|util|component|implementation)",
+          "(stop|avoid|don.?t).*?(writing|adding|creating).*?(new|another).*?(function|helper|util|wrapper)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": []
+      }
+    },
     "delivery-loop": {
       "type": "process",
       "enforcement": "suggest",

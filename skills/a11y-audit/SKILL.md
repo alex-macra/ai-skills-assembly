@@ -31,6 +31,16 @@ This is a dedicated *audit pass* over a page or flow - distinct from building ac
 - **Zoom & reflow:** 200% zoom loses no content/function; at 320px width there's no horizontal scroll (reflow).
 - **Target size (2.2):** interactive targets ≥ 24×24 CSS px (or have adequate spacing).
 
+## Static review (no browser)
+
+When reviewing a diff rather than a running page - no axe-core, no Lighthouse, no screen reader - check what the markup and styles can tell you without executing them, and say plainly that this is a static pass, not a substitute for the automated and manual passes above:
+
+- Semantic elements and ARIA roles/attributes are present and correctly paired (a `role="button"` div also gets a keyboard handler and `tabindex`).
+- Every form control's label, in the markup, either wraps it or matches its `for`/`id`.
+- Interactive elements are real buttons/links/inputs, not a `<div onClick>`.
+- Colour tokens against the design system's own contrast pairs, where the values are visible in the diff.
+- `alt` text is present and isn't the filename.
+
 ## Reporting findings
 
 Rank by user impact:

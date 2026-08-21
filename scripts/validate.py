@@ -234,6 +234,35 @@ def skill_frontmatter(path: Path, findings: list[Finding]) -> dict[str, object] 
     return fields
 
 
+def agent_declared_skills(path: Path) -> list[str]:
+    """Return the names under an agent's `skills:` frontmatter list, or [] if absent/unparsable.
+
+    Deliberately lenient about missing or malformed frontmatter - this only checks that any
+    declared skill names are real, not that agent files conform to a stricter shape.
+    """
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError):
+        return []
+    if not lines or lines[0] != "---":
+        return []
+    try:
+        end = lines.index("---", 1)
+    except ValueError:
+        return []
+    declared: list[str] = []
+    in_skills = False
+    for line in lines[1:end]:
+        if not line or not line[0].isspace():
+            in_skills = line.strip() == "skills:"
+            continue
+        if in_skills:
+            stripped = line.strip()
+            if stripped.startswith("- "):
+                declared.append(stripped[2:].strip())
+    return declared
+
+
 def check_python(root: Path, files: list[Path]) -> list[Finding]:
     findings: list[Finding] = []
     for path in files:
@@ -344,6 +373,7 @@ def validate_profiles(
     profiles: object,
     catalog_names: set[str],
     agent_names: set[str],
+    output_style_names: set[str],
     findings: list[Finding],
 ) -> set[str]:
     if not isinstance(profiles, dict):
@@ -360,7 +390,11 @@ def validate_profiles(
             findings.append(finding("catalog", "catalog.json", f"profiles.{profile_name} must be an object"))
             continue
 
-        for field, available in (("skills", catalog_names), ("agents", agent_names)):
+        for field, available in (
+            ("skills", catalog_names),
+            ("agents", agent_names),
+            ("outputStyles", output_style_names),
+        ):
             values = profile.get(field, [])
             if not string_list(values):
                 findings.append(
@@ -524,7 +558,37 @@ def validate_catalog(root: Path) -> tuple[list[Finding], dict[str, str], set[str
         missing_agents = sorted(disk_agents - agents)
         if missing_agents:
             findings.append(finding("catalog", "catalog.json", "uncataloged agents: " + ", ".join(missing_agents)))
-    default_skills = validate_profiles(data.get("profiles"), catalog_names, agents, findings)
+    for name in sorted(agents):
+        entry = (data.get("agents") or {}).get(name)
+        agent_path, error = safe_catalog_path(root, entry.get("path") if isinstance(entry, dict) else None)
+        if error or agent_path is None:
+            continue
+        declared = agent_declared_skills(agent_path)
+        unknown = sorted(set(declared) - catalog_names)
+        if unknown:
+            findings.append(
+                finding(
+                    "catalog",
+                    agent_path.relative_to(root),
+                    "agent skills reference unknown catalog skills: " + ", ".join(unknown),
+                )
+            )
+
+    output_styles = validate_named_paths(root, "outputStyles", data.get("outputStyles"), findings)
+    output_styles_root = root / "templates" / "output-styles"
+    if output_styles_root.is_dir():
+        disk_output_styles = {path.stem for path in output_styles_root.glob("*.md") if path.is_file()}
+        missing_output_styles = sorted(disk_output_styles - output_styles)
+        if missing_output_styles:
+            findings.append(
+                finding(
+                    "catalog",
+                    "catalog.json",
+                    "uncataloged output styles: " + ", ".join(missing_output_styles),
+                )
+            )
+
+    default_skills = validate_profiles(data.get("profiles"), catalog_names, agents, output_styles, findings)
 
     validate_path_map(
         root,
@@ -708,6 +772,25 @@ def validate_routing(
     return findings
 
 
+def check_template_parity(root: Path) -> list[Finding]:
+    claude_path = root / "templates" / "CLAUDE.md"
+    codex_path = root / "templates" / "AGENTS.md"
+    try:
+        claude_text = claude_path.read_text(encoding="utf-8")
+        codex_text = codex_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        return [finding("catalog", "templates", f"cannot read global rule templates: {exc}")]
+    if claude_text != codex_text:
+        return [
+            finding(
+                "catalog",
+                "templates",
+                "templates/CLAUDE.md and templates/AGENTS.md must stay identical",
+            )
+        ]
+    return []
+
+
 def check_listing(descriptions: dict[str, str], profile: set[str]) -> list[Finding]:
     total = sum(len(name) + len(descriptions.get(name, "")) for name in profile)
     if total > LISTING_FAIL_CHARS:
@@ -821,6 +904,7 @@ def validate(root: Path) -> list[Finding]:
     findings.extend(catalog_findings)
     findings.extend(validate_routing(root, set(descriptions), registry_path, fixtures_path))
     findings.extend(check_listing(descriptions, profile))
+    findings.extend(check_template_parity(root))
     findings.extend(check_plain_hyphens(root, entries, files))
     findings.extend(check_privacy(root, entries, files))
     findings.extend(check_secrets(root, entries, files))
