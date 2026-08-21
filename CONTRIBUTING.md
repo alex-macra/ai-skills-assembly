@@ -9,6 +9,10 @@ Contribute reusable, cross-project guidance. Keep organization, account, product
 - Register it in `catalog.json` and its intended profiles; add routing rules plus positive and negative fixtures when activation applies.
 - Keep optional detail in directly linked references.
 
+## Frontmatter policy
+
+Skills stick to agentskills.io-standard frontmatter fields so they stay portable to Codex. The library deliberately does not adopt `when_to_use` (it duplicates the description's listing cost on Claude and is invisible on Codex), `disable-model-invocation` (it severs suggestion-hook activation, since the model performs the invocation), or skill-registered hooks. Revisit only with measured need.
+
 ## Output styles
 
 - Put each output style at `templates/output-styles/<name>.md`, lowercase hyphenated, matching its catalog key.

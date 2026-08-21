@@ -54,9 +54,6 @@
     "see-it-live": {
       "path": "skills/see-it-live"
     },
-    "smoke-test": {
-      "path": "skills/smoke-test"
-    },
     "task-research": {
       "path": "skills/task-research"
     },
@@ -99,7 +96,6 @@
         "qa-automation",
         "security-review",
         "see-it-live",
-        "smoke-test",
         "task-research",
         "web-dev-backend",
         "web-dev-frontend"

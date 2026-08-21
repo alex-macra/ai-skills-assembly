@@ -37,9 +37,8 @@ If you find yourself writing the 30th E2E test for the same page, the pyramid is
 
 ## Waiting and synchronization
 
-- **Wait for state, not for time.** `await expect(locator).toBeVisible()` retries automatically. `await page.waitForTimeout(500)` is a flake waiting to happen.
-- For network-driven UI: `await page.waitForResponse(...)` or `await expect(locator).toContainText('Loaded')`. Pick a *visible* signal, not a transport one, when possible.
-- Animations: prefer `prefers-reduced-motion` or disable transitions in the test build over `waitForTimeout`.
+- **Wait for state, not for time.** `await expect(locator).toBeVisible()` retries automatically; `await page.waitForTimeout(500)` is a flake waiting to happen. Prefer a *visible* signal over a transport one; for animations, `prefers-reduced-motion` or disabled transitions in the test build.
+- The general flake doctrine - a flaky test is broken, fix it instead of retrying it green - belongs to `qa-automation`.
 
 ## Network handling
 
@@ -78,61 +77,7 @@ If you find yourself writing the 30th E2E test for the same page, the pyramid is
 
 ## Auth patterns
 
-Three common patterns:
-
-### 1. Cookie injection (test-endpoint apps)
-
-Best for apps with a `/api/test/seed` endpoint (enabled via `TEST_MODE=1`). No browser login flow - per-test, fully isolated:
-
-```ts
-// helpers.ts
-export async function seedAndAuth(request, context, email, tier = 'starter') {
-  const { sessionTokens } = await seed(request, { users: [{ email, tier }] });
-  await context.addCookies([{
-    name: 'session', value: sessionTokens[email],
-    domain: 'localhost', path: '/', httpOnly: true, sameSite: 'Strict',
-  }]);
-}
-
-// in test
-test('shows dashboard', async ({ page, request, context }) => {
-  await seedAndAuth(request, context, 'e2e@example.com');
-  await page.goto('/');
-  await expect(page.getByRole('main')).toBeVisible();
-});
-```
-
-### 2. storageState + globalSetup (OTP apps)
-
-Best for OTP-login apps with `DEV_OTP_BYPASS=true`. Auth runs once in `globalSetup`, saved to `.auth/user.json`, reused across all tests:
-
-```ts
-// global-setup.ts - calls /api/auth/login + /api/auth/verify with code '000000'
-// playwright.config.ts: globalSetup: './e2e/global-setup'
-
-// in test
-test.use({ storageState: 'e2e/.auth/user.json' });
-
-test('shows dashboard', async ({ page }) => {
-  // Mock /api/auth/me to avoid network round-trip
-  await page.route('/api/auth/me', route =>
-    route.fulfill({ status: 200, body: JSON.stringify({ user: { ... } }) })
-  );
-  await page.goto('/');
-});
-```
-
-### 3. Full mocking (public apps / no auth)
-
-For apps without auth or when testing specific API responses:
-
-```ts
-test.beforeEach(async ({ page }) => {
-  await page.route('**/api/items*', route =>
-    route.fulfill({ status: 200, body: JSON.stringify(fixtureScan) })
-  );
-});
-```
+Three patterns - cookie injection via a test seed endpoint, `storageState` + `globalSetup`, and full mocking - with code in `references/auth-patterns.md`. Pick by app type; never script the login UI in every test.
 
 ## CI baseline config
 

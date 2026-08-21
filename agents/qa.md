@@ -4,7 +4,6 @@ description: Write, run, and debug tests - unit, integration, and end-to-end - a
 skills:
   - qa-automation
   - e2e-qa
-  - smoke-test
   - see-it-live
 tools: Read, Grep, Glob, Edit, Write, Bash, TodoWrite
 model: inherit

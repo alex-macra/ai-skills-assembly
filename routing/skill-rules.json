@@ -4,7 +4,6 @@
   "skills": {
     "a11y-audit": {
       "type": "domain",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Dedicated accessibility audit - axe/Lighthouse plus a WCAG 2.2 AA manual checklist, severity-ranked findings with fixes.",
       "promptTriggers": {
@@ -36,7 +35,6 @@
     },
     "adversarial-review": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Independent second-pass review that tries to break the change - edge cases, error paths, invariants, concurrency, security - ending in a verdict.",
       "promptTriggers": {
@@ -67,7 +65,6 @@
     },
     "architect-review": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Clean code and architecture evaluation - boundaries, coupling, abstraction, naming, complexity hotspots.",
       "promptTriggers": {
@@ -108,7 +105,6 @@
     },
     "automation": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Repeatable infrastructure - CI/CD, deploy scripts, dev-server orchestration, scheduled jobs, container builds, releases, backups.",
       "promptTriggers": {
@@ -169,7 +165,6 @@
     },
     "code-comments": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "When and how to comment - default none, comment only the non-obvious WHY. Strips restatement, ticket refs, provenance notes, and verbose preambles.",
       "promptTriggers": {
@@ -204,7 +199,6 @@
     },
     "code-reuse": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Reuse before writing - find the existing helper and extend it instead of adding a near-duplicate.",
       "promptTriggers": {
@@ -237,7 +231,6 @@
     },
     "delivery-loop": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "high",
       "description": "Bounded delivery conductor from research and planning through implementation, quality loops, live verification, review, PR readiness, smoke testing, and merge handoff.",
       "promptTriggers": {
@@ -279,7 +272,6 @@
     },
     "e2e-qa": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "high",
       "description": "End-to-end testing - Playwright, Cypress, real browser/CLI/HTTP flows. Locator discipline, network handling, parallelization, flake elimination.",
       "promptTriggers": {
@@ -323,7 +315,6 @@
     },
     "fast-pr-workflow": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "high",
       "description": "Fast branch, commit, push, and PR create/update workflow for clean task work.",
       "promptTriggers": {
@@ -368,7 +359,6 @@
     },
     "qa-automation": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "high",
       "description": "Writing and running automated tests - unit / integration, fixtures, mocks-vs-reals, flake hunting. E2E covered by e2e-qa.",
       "promptTriggers": {
@@ -423,7 +413,6 @@
     },
     "security-review": {
       "type": "domain",
-      "enforcement": "suggest",
       "priority": "high",
       "description": "Security posture review - codebase or live target. OWASP Top 10, secrets, auth, input validation, supply chain, infra hygiene.",
       "promptTriggers": {
@@ -491,9 +480,8 @@
     },
     "see-it-live": {
       "type": "process",
-      "enforcement": "suggest",
-      "priority": "medium",
-      "description": "Launch the app and confirm the specific change is actually visible/working - screenshot, curl, boot the scene, run the command.",
+      "priority": "high",
+      "description": "Launch the app and confirm the specific change is actually visible/working - screenshot, curl, run the command. Doubles as the fast smoke pass after integrate and after deploy/merge.",
       "promptTriggers": {
         "keywords": [
           "see it live",
@@ -507,25 +495,7 @@
           "see the change",
           "does it render",
           "screenshot the",
-          "show it running"
-        ],
-        "intentPatterns": [
-          "(run|launch|start|boot|preview|serve).*?(app|server|game|scene|project|dev server|it live)",
-          "(see|show|preview).*?(it (live|running)|the change|in (the )?browser)",
-          "(screenshot|capture).*?(page|screen|ui|app|view)"
-        ]
-      },
-      "fileTriggers": {
-        "pathPatterns": []
-      }
-    },
-    "smoke-test": {
-      "type": "process",
-      "enforcement": "suggest",
-      "priority": "high",
-      "description": "Fast critical-path sanity check after integrate and after deploy/merge - boots, core path works, key endpoint responds. Not full journeys.",
-      "promptTriggers": {
-        "keywords": [
+          "show it running",
           "smoke test",
           "smoke check",
           "smoke-test",
@@ -535,6 +505,9 @@
           "post-deploy check"
         ],
         "intentPatterns": [
+          "(run|launch|start|boot|preview|serve).*?(app|server|game|scene|project|dev server|it live)",
+          "(see|show|preview).*?(it (live|running)|the change|in (the )?browser)",
+          "(screenshot|capture).*?(page|screen|ui|app|view)",
           "(run|do|add).*?(smoke|sanity).*?(test|check)",
           "(quick|fast).*?(sanity|check).*?(work|boot|render|up)",
           "(after (deploy|merge|integrate)).*?(check|verify|smoke)"
@@ -546,7 +519,6 @@
     },
     "task-research": {
       "type": "process",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Research a task before building - reuse-first codebase scan, source triage, facts vs assumptions, into a short brief.",
       "promptTriggers": {
@@ -576,7 +548,6 @@
     },
     "web-dev-backend": {
       "type": "stack",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Web backend - Node.js/TypeScript (Express, Fastify) and Python (FastAPI, Django, Flask). Async I/O, data pipelines, types, packaging.",
       "promptTriggers": {
@@ -652,7 +623,6 @@
     },
     "web-dev-frontend": {
       "type": "stack",
-      "enforcement": "suggest",
       "priority": "medium",
       "description": "Web frontend - TypeScript + React/Vue/Svelte components, hooks, state, styling, a11y, perf.",
       "promptTriggers": {

@@ -62,12 +62,11 @@ You are evaluating code or a design - not just shipping a feature. Slow down. Lo
 
 1. **Read the diff once, top-to-bottom**, no nitpicks. Form a hypothesis: what is this change *really* doing?
 2. **Locate the change in the architecture.** Which layer? Which boundary? Does it respect existing direction of dependencies?
-3. **List concerns by severity**:
-   - **Blocker** - correctness, security, data loss, breaks invariants.
-   - **Should fix** - design issues that will compound (coupling, naming, missing abstraction).
-   - **Nit** - stylistic, low-stakes.
+3. **List concerns by severity**, using the ladder below.
 4. **For each concern, propose the smallest change that resolves it.** "Rewrite this module" is rarely the answer. "Extract these 3 lines into a function with this name" usually is.
 5. **Note what's *good*.** A review that's only critical doesn't teach the pattern to repeat.
+
+Severity: Blocker (correctness, security, data loss) / Should-fix (compounding design debt) / Nit.
 
 ## When proposing refactors
 - Refactors are behavior-preserving. If you change behavior, that's a separate change with its own tests.
@@ -79,7 +78,7 @@ You are evaluating code or a design - not just shipping a feature. Slow down. Lo
 - Premature interfaces with one implementation.
 - Configuration via environment variable read deep inside a function.
 - `if (env === 'test') { ... }` branches in production code.
-- Comments explaining *what* the code does, ticket/PR refs, provenance notes, verbose preambles. Default to none - comment only the non-obvious WHY. See the `code-comments` skill.
+- Comment smells - restatement, ticket refs, provenance notes, verbose preambles: defer to the `code-comments` skill.
 - `TODO` without an owner or a date.
 - Re-implementing a stdlib/framework primitive.
 

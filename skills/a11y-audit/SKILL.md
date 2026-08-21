@@ -1,6 +1,6 @@
 ---
 name: a11y-audit
-description: "Accessibility audit pass over a page or flow: axe-core, Lighthouse, and a WCAG 2.2 AA manual checklist, reported severity-ranked with fixes. Use for an accessibility or a11y audit, WCAG conformance, screen reader or keyboard navigation testing, or contrast ratios. Building accessible components belongs to web-dev-frontend."
+description: "Accessibility audit of a page or flow: axe-core, Lighthouse, and a WCAG 2.2 AA manual checklist, severity-ranked with fixes. Use for an a11y audit, WCAG conformance, screen reader or keyboard testing, or contrast ratios. Building accessible components belongs to web-dev-frontend."
 license: MIT
 metadata:
   display-name: "Accessibility Audit"

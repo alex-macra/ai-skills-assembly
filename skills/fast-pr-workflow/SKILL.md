@@ -1,6 +1,6 @@
 ---
 name: fast-pr-workflow
-description: "Git and GitHub PR workflow: check the branch, branch from the task name, stage, commit, and create or update the pull request without merging or rebasing unless asked. Use to create PR, update PR, commit changes, push branch, or ship this work. Merge, squash, and land requests route here so the protected-branch policy applies."
+description: "Git and GitHub PR workflow: branch from the task, commit, and create or update the pull request without merging or rebasing unless asked. Use to create PR, update PR, commit, push, or ship this work. Merge, squash, and land requests route here so the main-branch guard applies."
 license: MIT
 metadata:
   display-name: "Fast PR Workflow"

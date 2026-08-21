@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: "Independent second-pass review that tries to break the change: invariants, edge cases, error paths, security, concurrency, ending in a concrete failing input and a verdict. Use for an adversarial review, red team pass, second opinion, devil's advocate check, try to break this, poke holes, or what could go wrong."
+description: "Independent second-pass review that tries to break the change: invariants, edge cases, error paths, concurrency, ending in a concrete failing input and a verdict. Use for an adversarial review, red team pass, second opinion, try to break this, or poke holes. Deep security passes belong to security-review."
 license: MIT
 metadata:
   display-name: "Adversarial Review"
@@ -25,7 +25,7 @@ This is the challenge pass that runs *after* a normal review. Your stance is not
 - **Error & failure paths** - what if the call throws, the network drops, the write half-completes, the file is missing, the JSON is malformed? Is the error swallowed? Is state left corrupt?
 - **Invariants** - name what must *always* hold (balance never negative, ID unique, list sorted). Then try to construct a sequence of operations that violates it.
 - **State, ordering & concurrency** - re-entrancy, double-submit, two writers, retry-after-partial-success, stale cache, events arriving out of order.
-- **Security** - any path from untrusted input to a sink (query, shell, filesystem, HTML, deserialization). Trust boundaries crossed without validation.
+- **Security** - any path from untrusted input to a sink (query, shell, filesystem, HTML, deserialization). Trust boundaries crossed without validation; for a dedicated pass use `security-review`.
 - **Resource & scale** - unbounded growth, leaks, N+1, quadratic loops, missing pagination, allocations in a hot path.
 
 ## Method
@@ -38,10 +38,12 @@ This is the challenge pass that runs *after* a normal review. Your stance is not
 ## Output
 
 - **Verdict:** *Confirmed solid* (with the attacks you tried and why they failed) OR *Defects found*.
-- Per defect: a **concrete failing scenario** (specific inputs/state → wrong output or crash), **severity** (Blocker / Should-fix / Nit), and the **smallest fix** that closes it.
+- Per defect: a **concrete failing scenario** (specific inputs/state → wrong output or crash), a severity from the ladder below, and the **smallest fix** that closes it.
 - No vague worries. "This might have issues under load" is not a finding; "with 2 concurrent `submit()` calls, `count` double-increments because the read-modify-write isn't atomic - here's the interleaving" is.
+
+Severity: Blocker (correctness, security, data loss) / Should-fix (compounding design debt) / Nit.
 
 ## What this skill is *not*
 
-- Not the first review - that's `code-reviewer` / `architect-review`. This runs after, to stress what they passed.
+- Not the first review - that's `architect-review`. This runs after, to stress what it passed.
 - Not a rewrite. Find the defect and the minimal fix; don't redesign.
