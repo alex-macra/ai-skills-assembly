@@ -23,7 +23,7 @@
     "review/adversarial review then smoke test": [
       "delivery-loop",
       "adversarial-review",
-      "smoke-test"
+      "see-it-live"
     ],
     "merge this PR into main": [
       "fast-pr-workflow"
@@ -120,10 +120,14 @@
       "see-it-live"
     ],
     "run a smoke test on the critical path": [
-      "smoke-test"
+      "see-it-live"
     ],
     "sanity check that it still boots": [
-      "smoke-test"
+      "see-it-live"
+    ],
+    "smoke test the deploy": [
+      "automation",
+      "see-it-live"
     ],
     "research the best library for PDF parsing": [
       "task-research"

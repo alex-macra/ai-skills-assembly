@@ -1,6 +1,6 @@
 ---
 name: web-dev-backend
-description: "Web backend work in Node and TypeScript (Express, Fastify) and Python (FastAPI, Django, Flask): routes, middleware, async I/O, validation, data pipelines, type discipline, dependency hygiene. Use when building or reviewing backend services, API endpoints, database schemas and migrations, or files under api/, backend/, or server/."
+description: "Web backend work in Node/TypeScript (Express, Fastify) and Python (FastAPI, Django): routes, middleware, async I/O, validation, type discipline. Use when building or reviewing backend services, API endpoints, database schemas and migrations, or files under api/, backend/, or server/."
 license: MIT
 metadata:
   display-name: "Web Backend"

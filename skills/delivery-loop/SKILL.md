@@ -38,7 +38,7 @@ Three phases have a subagent with the relevant skills already preloaded - prefer
 6. **Quality loop** (`qa-automation`, `e2e-qa`, `security-review`, `a11y-audit`) - Plus project validation commands as applicable. Fix real failures and rerun affected checks.
 7. **PR gate** (`fast-pr-workflow`) - Summarize diff and validation; commit, push, or create/update a PR only after explicit user approval.
 8. **Review loop** (`architect-review`, then `adversarial-review`) - Normal review first, falsification pass second. Fix scoped defects and rerun relevant checks.
-9. **Final smoke** (`smoke-test`) - After final fixes and again after deploy/merge when applicable.
+9. **Final smoke** (`see-it-live`, smoke mode) - After final fixes and again after deploy/merge when applicable.
 10. **Await merge** - Do not merge. Keep `main`/`master` PRs open or draft until the user explicitly names that merge in the current message; report PR URL, validation, remaining risks, and status.
 
 ## Quality loop policy
