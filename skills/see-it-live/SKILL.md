@@ -40,9 +40,9 @@ The same launch paths double as the fast critical-path gate between "built" and 
 - A **key endpoint responds** (health/liveness or the primary surface).
 - **No error spew** in logs or console.
 
-Run it twice: once after integrating a change, and again after deploy or merge. The post-deploy run hits the **deployed** URL, not localhost - localhost passing tells you nothing about prod - and confirms the new build is actually live (version endpoint, build hash, or a marker from the change). A post-deploy failure is a rollback trigger: surface it loudly, don't bury it.
+Run it twice: once after integrating a change, and again after deploy or merge. A failed smoke pass is a hard stop: do not proceed to ship until it passes. The post-deploy run hits the **deployed** URL, not localhost - localhost passing tells you nothing about prod - and confirms the new build is actually live (version endpoint, build hash, or a marker from the change). A post-deploy failure is a rollback trigger: surface it loudly, don't bury it.
 
-Keep smoke mode fast and deterministic: no flaky waits, no giant fixtures, a clear pass/fail signal. If you're writing the tenth assertion, you've drifted into `e2e-qa` territory - pull back.
+Keep smoke mode fast and deterministic: no flaky waits, no giant fixtures, no dependence on third-party services you can't stub, a clear pass/fail signal. If you're writing the tenth assertion, you've drifted into `e2e-qa` territory - pull back.
 
 ## Capture evidence
 

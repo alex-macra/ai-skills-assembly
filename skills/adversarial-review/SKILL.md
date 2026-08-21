@@ -38,7 +38,7 @@ This is the challenge pass that runs *after* a normal review. Your stance is not
 ## Output
 
 - **Verdict:** *Confirmed solid* (with the attacks you tried and why they failed) OR *Defects found*.
-- Per defect: a **concrete failing scenario** (specific inputs/state → wrong output or crash), a severity from the ladder below, and the **smallest fix** that closes it.
+- Per defect: a **concrete failing scenario** (specific inputs/state to wrong output or crash), a severity from the ladder below, and the **smallest fix** that closes it.
 - No vague worries. "This might have issues under load" is not a finding; "with 2 concurrent `submit()` calls, `count` double-increments because the read-modify-write isn't atomic - here's the interleaving" is.
 
 Severity: Blocker (correctness, security, data loss) / Should-fix (compounding design debt) / Nit.

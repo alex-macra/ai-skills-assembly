@@ -125,14 +125,10 @@
     "sanity check that it still boots": [
       "see-it-live"
     ],
-    "smoke test the deploy": {
-      "expect": [
-        "see-it-live"
-      ],
-      "available": [
-        "see-it-live"
-      ]
-    },
+    "smoke test the deploy": [
+      "automation",
+      "see-it-live"
+    ],
     "research the best library for PDF parsing": [
       "task-research"
     ],
